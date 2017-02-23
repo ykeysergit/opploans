@@ -1,0 +1,2 @@
+class IncompatibleSeatingArrangementException < RuntimeError
+end
