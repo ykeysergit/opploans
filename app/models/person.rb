@@ -5,4 +5,8 @@ class Person < ApplicationRecord
   def to_s
     "#{name}(#{age})"
   end
+  
+  def to_hash
+    {id: id, name: name, age: age}
+  end
 end

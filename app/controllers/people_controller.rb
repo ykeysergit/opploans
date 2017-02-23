@@ -1,39 +1,37 @@
 class PeopleController < ApplicationController
   def create
-    render json: Person.create(person_params)
+    render json: Person.create(name: params[:person][:name], age: params[:person][:age].to_i).to_hash
   end
   
   def show
     process_if_person_found do |foundPerson|
-      render json: foundPerson
+      render json: foundPerson.to_hash
     end
   end
   
   def update
     process_if_person_found do |foundPerson|
-      foundPerson.update(name: person_params[:name], age: person_params[:age]) 
-      render json: foundPerson
+      foundPerson.update(name: params[:person][:name], age: params[:person][:age].to_i) 
+      render json: foundPerson.to_hash
     end
   end
   
   def destroy
     process_if_person_found do |foundPerson|
       foundPerson.destroy
+      render json: foundPerson.to_hash
     end
   end
   
   protected
-  def person_params
-    params.require(:person).permit(:id,:name,:age)
-  end
-  
+
   def process_if_person_found
-    foundPerson=Person.find_by(id: person_params[:id].to_i)
+    foundPerson=Person.find_by(id: params[:id].to_i)
     
     if foundPerson
       yield foundPerson
     else
-      render status: :not_found
+      render json:{}, status: :not_found
     end
   end
 end
