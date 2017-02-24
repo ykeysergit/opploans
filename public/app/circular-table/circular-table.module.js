@@ -1,1 +1,1 @@
-angular.module('circularTableModule', []);
+angular.module('circularTableModule', ['core']);

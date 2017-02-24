@@ -22,17 +22,33 @@
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+<!-- angular js -->
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-resource.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.3/require.min.js"></script>
 
 <!-- App JS -->
 <script src="circular-table/boot.js"></script>
-<script src="circular-table/circular-table.module.js"></script>
-<script src="app.module.js"></script>
+
+<!-- model -->
 <script src="circular-table/model/person.model.js"></script>
 <script src="circular-table/model/table.model.js"></script>
 <script src="circular-table/model/seating_arrangement.model.js"></script>
+
+<!-- modules -->
+<script src="core/person/person.module.js"></script>
+<script src="core/core.module.js"></script>
+<script src="circular-table/circular-table.module.js"></script>
+<script src="app.module.js"></script>
+
+<!-- services -->
+<script src="core/person/person.service.js"></script>
+
+<!-- components -->
 <script src="circular-table/greeter.component.js"></script>
 <script src="circular-table/circular-table.component.js"></script>
+
 </head>
 <body>
 	<greet-user-component></greet-user-component>

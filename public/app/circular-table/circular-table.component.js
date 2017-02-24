@@ -1,9 +1,8 @@
 angular.module('circularTableModule').
   component('circularTableComponent', {
     templateUrl:'circular-table/circular-table.template.html',
-    controller: function CircularTableController() {
+    controller: ['Person',function CircularTableController(Person) {
       this.seating_arrangements = [];
       this.people = [];
-    }
+    }]
   });
-
