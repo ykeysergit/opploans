@@ -3,9 +3,11 @@ angular.module('core.Person').
     function($resource) {
     
   		myns.Person.create=function(params){
-  			$resource('/people',
-  				{person:{name: '@name', age: '@age'}}
-  			).$save(params);
+  			var Client=$resource('/app/people');  			
+  			var newClient = new Client();
+  			
+  			newClient.person={name: params.age, age: params.age};
+  			newClient.$save();
   		};
 
     	return myns.Person;

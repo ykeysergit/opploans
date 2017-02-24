@@ -1,5 +1,6 @@
 class TablesController < ApplicationController
   before_action :init_logger
+  protect_from_forgery with: :null_session
   
   def init_logger
     @logger = Rails.logger

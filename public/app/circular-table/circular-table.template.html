@@ -6,11 +6,11 @@
 		  <div class="panel-body">
 		    <form class="navbar-form navbar-left">
 			  <div class="form-group">
-			  	<input type="text" class="form-control" placeholder="id">
-			    <input type="text" class="form-control" placeholder="name">
-			    <input type="text" class="form-control" placeholder="age">
+			  	<input type="text" class="form-control" placeholder="id" ng-model="$ctrl.id">
+			    <input type="text" class="form-control" placeholder="name" ng-model="$ctrl.name">
+			    <input type="text" class="form-control" placeholder="age" ng-model="$ctrl.age">
 			  </div>
-			  <button type="submit" class="btn btn-default">create</button>
+			  <button type="submit" class="btn btn-default" ng-click="$ctrl.create({name: $ctrl.name,age: $ctrl.age})">create</button>
 			  <button type="submit" class="btn btn-default">show</button>
 			  <button type="submit" class="btn btn-default">update</button>
 			  <button type="submit" class="btn btn-default">delete</button>

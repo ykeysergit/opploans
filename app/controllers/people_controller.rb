@@ -1,4 +1,6 @@
 class PeopleController < ApplicationController
+  protect_from_forgery with: :null_session
+  
   def create
     render json: Person.create(name: params[:person][:name], age: params[:person][:age].to_i).to_hash
   end

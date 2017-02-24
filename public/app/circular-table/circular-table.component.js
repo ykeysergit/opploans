@@ -2,10 +2,14 @@ angular.module('circularTableModule').
   component('circularTableComponent', {
     templateUrl:'circular-table/circular-table.template.html',
     controller: ['Person',function CircularTableController(Person) {
-      this.seating_arrangements = [];
-      this.people = [];
+      var self=this;
+      self.seating_arrangements = [];
+      self.people = [];
+      self.age='';
+      self.name='';
+      self.id='';
       
-      this.create=function(params){
+      self.create=function(params){
       	Person.create(params);
       };
     }]
