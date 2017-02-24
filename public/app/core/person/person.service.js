@@ -1,9 +1,13 @@
-angular.module('core.person').
+angular.module('core.Person').
   factory('Person', ['$resource',
     function($resource) {
     
-  		// TODO
-    	return {};	
-    
+  		myns.Person.create=function(params){
+  			$resource('/people',
+  				{person:{name: '@name', age: '@age'}}
+  			).$save(params);
+  		};
+
+    	return myns.Person;
     }
   ]);

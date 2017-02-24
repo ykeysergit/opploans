@@ -4,5 +4,9 @@ angular.module('circularTableModule').
     controller: ['Person',function CircularTableController(Person) {
       this.seating_arrangements = [];
       this.people = [];
+      
+      this.create=function(params){
+      	Person.create(params);
+      };
     }]
   });
