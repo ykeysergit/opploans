@@ -1,31 +1,139 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="circularTableApp">
 <head>
 <title>Circular Table</title>
 <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
-integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
 <!-- Optional theme -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" 
-integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
 
 <!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
-integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
 <!-- Optional theme -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
 
 <!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
-integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular.min.js"></script>
+
+<script src="settings.js"></script>
+<script src="util.js"></script>
+<script src="model.js"></script>
+<script src="controllers.js"></script>
+<script src="view.js"></script>
+<script src="boot.js"></script>
 </head>
 <body>
 	<div class="container-fluid">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+		    <h3 class="panel-title">Person CRUD</h3>
+		  </div>
+		  <div class="panel-body">
+		    <form class="navbar-form navbar-left">
+			  <div class="form-group">
+			    <input type="text" class="form-control" placeholder="name" id="create.person.text">
+			  </div>
+			  <div class="form-group">
+			    <input type="text" class="form-control" placeholder="age" id="create.person.age">
+			  </div>
+			  <button type="submit" class="btn btn-default" onclick="mynamespace.peopleController.create()">create</button>
+			</form>
+			
+			<form class="navbar-form navbar-left">
+			  <div class="form-group">
+			    <input type="text" class="form-control" placeholder="id">
+			  </div>
+			  <div class="form-group">
+			    <input type="text" class="form-control" placeholder="name">
+			  </div>
+			  <div class="form-group">
+			    <input type="text" class="form-control" placeholder="age">
+			  </div>
+			  <button type="submit" class="btn btn-default">update</button>
+			</form>
+			
+			<form class="navbar-form navbar-left">
+			  <div class="form-group">
+			    <input type="text" class="form-control" placeholder="id">
+			  </div>
+			  <button type="submit" class="btn btn-default">delete</button>
+			</form>
+			
+			<form class="navbar-form navbar-left">
+			  <div class="form-group">
+			    <input type="text" class="form-control" placeholder="id">
+			  </div>
+			  <button type="submit" class="btn btn-default">show</button>
+			</form>
+		  </div>
+		</div>
+		
+		<div class="panel panel-default">
+			<div class="panel-heading">
+		    <h3 class="panel-title">Table CRUD</h3>
+		  </div>
+		  <div class="panel-body">
+		    <form class="navbar-form navbar-left">
+			  <button type="submit" class="btn btn-default">create</button>
+			</form>
+			
+			<form class="navbar-form navbar-left">
+			  <div class="form-group">
+			    <input type="text" class="form-control" placeholder="id">
+			  </div>
+			  <button type="submit" class="btn btn-default">delete</button>
+			</form>
+			
+			<form class="navbar-form navbar-left">
+			  <div class="form-group">
+			    <input type="text" class="form-control" placeholder="id">
+			  </div>
+			  <button type="submit" class="btn btn-default">show</button>
+			</form>
+			
+			<form class="navbar-form navbar-left">
+			  <div class="form-group">
+			    <input type="text" class="form-control" placeholder="person id">
+			  </div>
+			  <button type="submit" class="btn btn-default">update</button>
+			</form>
+		  </div>
+		</div>
+		
+		<div class="panel panel-default" ng-controller="PeopleController">
+		  <!-- Default panel contents -->
+		  <div class="panel-heading">People</div>
+		
+		  <!-- Table -->
+		  <table class="table" id="people.table">
+		    <tr ng-repeat="person in people">
+		    	<td>{{person.getName()}}</td>
+		    	<td>{{person.getAge()}}</td>
+		    </tr>
+		  </table>
+		</div>
+		
+		<div class="panel panel-default" ng-controller="SeatingArrangementsController">
+		  <!-- Default panel contents -->
+		  <div class="panel-heading">Seating arrangements</div>
+
+		
+		  <!-- Table -->
+		  <table class="table" id="seating.arrangements.table">
+		  	<tr ng-repeat="seating in seating_arrangements">
+			    <td>{{seating.getPosition()}}</td>
+			    <td>{{seating.getPerson()}}</td>
+			    <td>{{seating.getTable().getId()}}</td>
+		   </tr>
+		  </table>
+		</div>
+	</div>
 </div>
 </body>
 </html>
