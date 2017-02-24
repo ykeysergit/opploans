@@ -3,6 +3,10 @@ class Table < ApplicationRecord
   has_many :people, :through => :seating_arrangements
   
   @@AGE_THRESHOLD=5
+  
+  after_initialize do |record|
+    @logger = Rails.logger
+  end
 
   def self.valid_to_sit_between?(left_person, right_person, middle_person)
     if !middle_person.is_a?(Person)
@@ -27,36 +31,44 @@ class Table < ApplicationRecord
   def seat_a_person(unseated_person)
     # Handle base cases
 
+    new_seat_arrangement=false
+
+    if !self.people.where(name: unseated_person.name, age: unseated_person.age).blank?
+      raise AlreadySeatedPersonException.new(unseated_person, "Person(#{unseated_person.name}) already seated")
+    end
+
     # First person
     if seating_arrangements.empty?
-      seating_arrangements.create(person: unseated_person, table: self, position: 0)
-      
+      new_seat_arrangement=seating_arrangements.create(person: unseated_person, table: self, position: 0)
+      @logger.info("First person has been seated: #{unseated_person.name}(#{unseated_person.age})")
     # Second person  
     elsif seating_arrangements.count == 1 && 
       self.class.age_within_threshold?(seating_arrangements.first.person.age, unseated_person.age)
       
-      seating_arrangements.create(table: self, person: unseated_person, position: 1)
-    
+      new_seat_arrangement=seating_arrangements.create(table: self, person: unseated_person, position: 1)
+      @logger.info("Second person has been seated: #{unseated_person.name}(#{unseated_person.age})")
     # Find sandwich  
-    elsif seating_arrangements.count > 1
-      is_seated=false
-      
+    elsif seating_arrangements.count > 1      
       for position in (1..seating_arrangements.count-1) 
         if self.class.valid_to_sit_between?(seating_arrangements[position-1].person,
                                           seating_arrangements[position].person,
                                           unseated_person)
                                           
-            self.class.place_in_between(self,unseated_person, seating_arrangements[position-1], seating_arrangements[position])
-            is_seated=true
+            new_seat_arrangement=self.class.place_in_between(self,unseated_person, seating_arrangements[position-1], seating_arrangements[position])
         end
       end
       
-      if !is_seated && self.class.valid_to_sit_between?(seating_arrangements[0].person,
+      if !new_seat_arrangement && self.class.valid_to_sit_between?(seating_arrangements[0].person,
                                           seating_arrangements[seating_arrangements.count-1].person,
                                           unseated_person)                
-          self.class.place_in_between(self,unseated_person, seating_arrangements[0], seating_arrangements[seating_arrangements.count-1])
-          is_seated=true
+          new_seat_arrangement=self.class.place_in_between(self,unseated_person, seating_arrangements[0], seating_arrangements[seating_arrangements.count-1])
       end
+    end
+    
+    if new_seat_arrangement
+      @logger.info("Person has been seated: #{unseated_person.name}(#{unseated_person.age}). Position: #{new_seat_arrangement.position}")
+    else
+      raise InvalidSeatingArrangementException.new(unseated_person, "Person(#{unseated_person.name}) could not be seated")
     end
   end
   

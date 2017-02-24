@@ -41,7 +41,8 @@ describe Table, type: :model do
       
       it 'then that person will not be seated' do
         table.seat_a_person(first_person)
-        table.seat_a_person(invalid_person)
+        
+        expect{table.seat_a_person(invalid_person)}.to raise_error(InvalidSeatingArrangementException)
         expect(table.seating_arrangements.count).to eql(1)
         expect(table.seating_arrangements.first.person).to eql(first_person)     
       end
@@ -80,7 +81,8 @@ describe Table, type: :model do
       it 'then that person will not be seated' do
         table.seat_a_person(first_person)
         table.seat_a_person(second_person)
-        table.seat_a_person(invalid_person)
+        
+        expect{table.seat_a_person(invalid_person)}.to raise_error(InvalidSeatingArrangementException)
         
         table.seating_arrangements.reload
         expect(table.seating_arrangements.count).to eql(2)
