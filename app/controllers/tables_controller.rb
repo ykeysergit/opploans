@@ -40,10 +40,8 @@ class TablesController < ApplicationController
         unseated_person.age=person['age'].to_i
         foundTable.seat_a_person(unseated_person)
       rescue InvalidSeatingArrangementException => e
-        # log exception here
         @logger.info("Message: #{e.message}. Not seated: #{e.person}")
       rescue AlreadySeatedPersonException => e
-        # log exception here
         @logger.info("Message: #{e.message}. Not seated: #{e.person}")
       end 
     end
