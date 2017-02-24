@@ -72,4 +72,22 @@ class Table < ApplicationRecord
     
     table.seating_arrangements.create(table: table, person: middle_person, position: target_position)
   end
+  
+  def to_hash
+    self_hash = {id: self.id, people: [], seating_arrangements: []}
+    
+    people.each do |person|
+      self_hash[:people] << person.to_hash
+    end
+    
+    seating_arrangements.reload.each do |seating|
+      self_hash[:seating_arrangements] << seating.to_hash
+    end
+    
+    self_hash
+  end
+  
+  def to_s
+    to_hash.to_s
+  end
 end
