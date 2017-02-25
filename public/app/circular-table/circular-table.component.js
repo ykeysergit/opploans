@@ -134,7 +134,7 @@ angular.module('circularTableModule').
       		console.log("[CircularTableComponent][updatePerson] resp: "+JSON.stringify(httpResp));
       	};
       	
-      	return Person.update({id: params.id, name: params.name, age: params.age, then: params.then});
+      	return Person.update({id: params.id, name: params.name, age: params.age, then: params.then, error: params.error});
       };
       
       self.destroyPerson=function(params){
@@ -181,7 +181,7 @@ angular.module('circularTableModule').
       		console.log("[CircularTableComponent][destroyPerson] resp: "+JSON.stringify(httpResp));
       	};
       	
-      	return Person.destroy({id: params.id, then: params.then});
+      	return Person.destroy({id: params.id, then: params.then, error: params.error});
       };
       
       self.createPerson=function(params){
@@ -215,7 +215,7 @@ angular.module('circularTableModule').
       	
       	console.log("[CircularTableComponent][createPerson] create person: " +JSON.stringify({age: params.age, name: params.name}));
       	
-      	return Person.create({age: params.age, name: params.name, then: params.then});
+      	return Person.create({age: params.age, name: params.name, then: params.then, error: params.error});
       };
     }]
   });
