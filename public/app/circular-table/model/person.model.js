@@ -1,17 +1,25 @@
 myns.Person=function(params){
-	var id, age, name, tables=new Array(),seatArrangements=new Array();
+	var self=this, id, age, name, tables=new Array(),seatArrangements=new Array();
 	
 	(function init()
 	{
-		age=params.age;
-		name=params.name;
+		if(jQuery.isPlainObject(params)){ 
+			id=params.id;
+			age=params.age;
+			name=params.name;
+		}
 	})();
 	
-	this.getId=function(){return id;};
-	this.getAge=function(){return age;};
-	this.getName=function(){return name;};
+	self.getId=function(){return id;};
+	self.getAge=function(){return age;};
+	self.getName=function(){return name;};
 	
-	this.setAge=function(newAge){age=newAge;};
-	this.setName=function(newName){name=newName;};	
+	self.setId=function(newId){id=newId;};
+	self.setAge=function(newAge){age=newAge;};
+	self.setName=function(newName){name=newName;};	
+	
+	self.toString=function(){
+		return JSON.stringify({id: id, name: name, age: age});
+	};
 };
 

@@ -1,7 +1,7 @@
 <div class="container-fluid">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-		    <h3 class="panel-title">Person CRUD</h3>
+		    <h3 class="panel-title">Person Actions</h3>
 		  </div>
 		  <div class="panel-body">
 		    <form class="navbar-form navbar-left">
@@ -10,24 +10,22 @@
 			    <input type="text" class="form-control" placeholder="name" ng-model="$ctrl.name">
 			    <input type="text" class="form-control" placeholder="age" ng-model="$ctrl.age">
 			  </div>
-			  <button type="submit" class="btn btn-default" ng-click="$ctrl.create({name: $ctrl.name,age: $ctrl.age})">create</button>
-			  <button type="submit" class="btn btn-default">show</button>
-			  <button type="submit" class="btn btn-default">update</button>
-			  <button type="submit" class="btn btn-default">delete</button>
+			  <button type="button" class="btn btn-default" ng-click="$ctrl.create({name: $ctrl.name,age: $ctrl.age})">create</button>
+			  <button type="button" class="btn btn-default" ng-click="$ctrl.update({id: $ctrl.id, name: $ctrl.name, age: $ctrl.age})">update</button>
+			  <button type="button" class="btn btn-default" ng-click="$ctrl.destroy({id: $ctrl.id})">delete</button>
 			</form>
 		  </div>
 		</div>
 		
 		<div class="panel panel-default">
 			<div class="panel-heading">
-		    <h3 class="panel-title">Table CRUD</h3>
+		    <h3 class="panel-title">Table Actions</h3>
 		  </div>
 		  <div class="panel-body">
 		    <form class="navbar-form navbar-left">
-			  <button type="submit" class="btn btn-default">create</button>
-			  <button type="submit" class="btn btn-default">show</button>
-			  <button type="submit" class="btn btn-default">update</button>
-			  <button type="submit" class="btn btn-default">delete</button>
+			  <button type="button" class="btn btn-default">create</button>
+			  <button type="button" class="btn btn-default">update</button>
+			  <button type="button" class="btn btn-default">delete</button>
 			</form>
 		  </div>
 		</div>
@@ -37,8 +35,17 @@
 		  <div class="panel-heading">People</div>
 		
 		  <!-- Table -->
-		  <table class="table" id="people.table">
-		    <tr ng-repeat="person in people">
+		  <table class="table table-striped table-bordered" id="people.table">
+		  	<thead>
+			  	<tr>
+			  		<th>Id</th>
+			  		<th>Name</th>
+			  		<th>Age</th>
+			  	</tr>
+		  	</thead>
+		  	<tr ng-if="$ctrl.people.length==0"><td colspan="3">No people known</td></tr>
+		    <tr ng-repeat="person in $ctrl.people">
+		    	<td>{{person.getId()}}</td>
 		    	<td>{{person.getName()}}</td>
 		    	<td>{{person.getAge()}}</td>
 		    </tr>
@@ -51,10 +58,18 @@
 
 		
 		  <!-- Table -->
-		  <table class="table" id="seating.arrangements.table">
-		  	<tr ng-repeat="seating in seating_arrangements">
+		  <table class="table table-striped table-bordered" id="seating.arrangements.table">
+		  	<thead>
+		  		<tr>
+		  			<th>Position</th>
+		  			<th>Person Id</th>
+		  			<th>Table Id</th>
+		  		</tr>
+		  	</thead>
+		  	<tr ng-if="$ctrl.seating_arrangements.length==0"><td colspan="3">No people seated</td></tr>
+		  	<tr ng-repeat="seating in $ctrl.seating_arrangements">
 			    <td>{{seating.getPosition()}}</td>
-			    <td>{{seating.getPerson()}}</td>
+			    <td>{{seating.getPerson().getId()}}</td>
 			    <td>{{seating.getTable().getId()}}</td>
 		   </tr>
 		  </table>
