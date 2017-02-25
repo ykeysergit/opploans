@@ -26,8 +26,10 @@ class TablesController < ApplicationController
   
   def update
     process_if_table_found do |foundTable|
-      update_people(foundTable, params[:table][:people]) if params[:table] && params[:table][:people]
-      render json: foundTable.to_hash
+      error_messages = update_people(foundTable, params[:table][:people]) if params[:table] && params[:table][:people]
+      result_hash = foundTable.to_hash
+      result_hash[:errors]=error_messages
+      render json: result_hash
     end
   end
   
@@ -43,6 +45,8 @@ class TablesController < ApplicationController
   def update_people(foundTable, people)
     @logger.info("People to update: #{people.count}")
     
+    error_messages=[]
+    
     people.each do |person|
       begin
         unseated_person = Person.find_by(id: person['id'].to_i)
@@ -50,11 +54,13 @@ class TablesController < ApplicationController
 
         foundTable.seat_a_person(unseated_person)
       rescue InvalidSeatingArrangementException => e
-        @logger.info("Message: #{e.message}. Person: #{e.person}")
-      rescue AlreadySeatedPersonException => e
-        @logger.info("Message: #{e.message}. Person: #{e.person}")
+        error_msg = "#{e.message}. Person: #{e.person}. Table: #{foundTable}"
+        @logger.info error_msg
+        error_messages << error_msg
       end 
     end
+    
+    error_messages
   end
 
   def process_if_table_found

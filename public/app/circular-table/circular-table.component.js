@@ -16,18 +16,15 @@ angular.module('circularTableModule').
       self.name='';
       self.personId='';
       self.tableId='';
-      self.personError='';
-      self.tableError='';
       self.autoRefreshEnabled=false;
       self.tableUpdated='';
+      self.validation_messages=[];
       
       function clearInput(){
       	self.personId='';
       	self.tableId='';
 		self.name='';
 		self.age='';
-		self.personError='';
-		self.tableError='';
       }
       
       self.toggleAutoReload=function(){
@@ -125,6 +122,7 @@ angular.module('circularTableModule').
   			console.log("[CircularTableComponent][createTable] New table created: " + newTable);
   			console.log("[CircularTableComponent][createTable] Num tables after create: "+self.tables.length);
   			clearInput();
+  			self.validation_messages=[];
   		};
   	
   		Table.create({then: params.then});
@@ -163,6 +161,14 @@ angular.module('circularTableModule').
   			});
   			
   			self.tableUpdated=tableJson.id;
+  			
+  			jQuery.each(tableJson.errors, function(index, error_msg){
+  				self.validation_messages.push(error_msg);
+  			});
+  			
+  			if(!tableJson.errors || tableJson.errors.length==0){
+  				self.validation_messages=[];
+  			}
   		};
   	
   		Table.update({id: params.id, people: self.people, then: params.then});
@@ -196,6 +202,7 @@ angular.module('circularTableModule').
 			}
 	
   			clearInput();
+  			self.validation_messages=[];
   		};
   		
   		Table.destroy({id: params.id, then: params.then});
@@ -283,9 +290,6 @@ angular.module('circularTableModule').
 	      		console.log("[CircularTableComponent][createPerson] New person object: " + personJson);
 	      		console.log("[CircularTableComponent][createPerson] Number of known people after create: "+self.people.length);
 	      		clearInput();
-      		}
-      		else{
-      			self.error="Person not created: "+params.name+"("+params.age+")";
       		}
       	};
       	

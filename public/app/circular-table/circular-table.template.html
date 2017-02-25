@@ -19,8 +19,6 @@
 			  <button type="button" class="btn btn-default" ng-click="$ctrl.updatePerson({id: $ctrl.personId, name: $ctrl.name, age: $ctrl.age})">update</button>
 			  <button type="button" class="btn btn-default" ng-click="$ctrl.destroyPerson({id: $ctrl.personId})">delete</button>
 			</form>
-			
-			 <div ng-if="$ctrl.personError.length>0"><font color="red"><b>{{$ctrl.personError}}</b></font></div>
 		  </div>
 		</div>
 		
@@ -35,14 +33,12 @@
 			  <button type="button" class="btn btn-default" ng-click="$ctrl.updateTable({id: $ctrl.tableId})">update</button>
 			  <button type="button" class="btn btn-default" ng-click="$ctrl.destroyTable({id: $ctrl.tableId})">delete</button>
 			</form>
-			
-			<div ng-if="$ctrl.tableError.length>0"><font color="red"><b>{{$ctrl.tableError}}</b></font></div>
 		  </div>
 		</div>
 		
 		<div class="panel panel-default">
 		  <!-- Default panel contents -->
-		  <div class="panel-heading">People</div>
+		  <div class="panel-heading"><h3 class="panel-title">People</h3></div>
 		
 		  <!-- Table -->
 		  <table class="table table-striped table-bordered" id="people.table">
@@ -64,7 +60,7 @@
 		
 		<div class="panel panel-default">
 		  <!-- Default panel contents -->
-		  <div class="panel-heading">Tables</div>
+		  <div class="panel-heading"><h3 class="panel-title">Tables</h3></div>
 		  
 		  <!-- Table -->
 		  <table class="table table-striped table-bordered" id="tables">
@@ -82,7 +78,8 @@
 		
 		<div class="panel panel-default">
 		  <!-- Default panel contents -->
-		  <div class="panel-heading">Seating arrangements<b ng-if="($ctrl.tableUpdated+'').length > 0">(Table {{$ctrl.tableUpdated}})</b></div>
+		  <div class="panel-heading"><h3 class="panel-title">Seating Arrangements</h3>
+		  	<b ng-if="($ctrl.tableUpdated+'').length > 0">(Table {{$ctrl.tableUpdated}})</b></div>
 
 		
 		  <!-- Seating arrangements -->
@@ -99,6 +96,25 @@
 			    <td>{{seating.getPosition()}}</td>
 			    <td>{{seating.getPerson().getId()}}</td>
 			    <td>{{seating.getTable().getId()}}</td>
+		   </tr>
+		  </table>
+		</div>
+		
+		<div class="panel panel-default">
+		  <!-- Default panel contents -->
+		  <div class="panel-heading"><h3 class="panel-title">Validation<b>({{$ctrl.validation_messages.length}})</b></h3></div>
+
+		
+		  <!-- Seating arrangements -->
+		  <table class="table table-striped table-bordered" id="validation.table">
+		  	<thead>
+		  		<tr>
+		  			<th>Message</th>
+		  		</tr>
+		  	</thead>
+		  	<tr ng-if="$ctrl.validations.length==0"><td colspan="3">No invalid updates</td></tr>
+		  	<tr ng-repeat="validation_msg in $ctrl.validation_messages track by $index">
+			    <td>{{validation_msg}}</td>
 		   </tr>
 		  </table>
 		</div>
