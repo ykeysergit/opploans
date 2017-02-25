@@ -6,14 +6,16 @@
 		  <div class="panel-body">
 		    <form class="navbar-form navbar-left">
 			  <div class="form-group">
-			  	<input type="text" class="form-control" placeholder="id" ng-model="$ctrl.id">
+			  	<input type="text" class="form-control" placeholder="id" ng-model="$ctrl.personId">
 			    <input type="text" class="form-control" placeholder="name" ng-model="$ctrl.name">
 			    <input type="text" class="form-control" placeholder="age" ng-model="$ctrl.age">
 			  </div>
-			  <button type="button" class="btn btn-default" ng-click="$ctrl.create({name: $ctrl.name,age: $ctrl.age})">create</button>
-			  <button type="button" class="btn btn-default" ng-click="$ctrl.update({id: $ctrl.id, name: $ctrl.name, age: $ctrl.age})">update</button>
-			  <button type="button" class="btn btn-default" ng-click="$ctrl.destroy({id: $ctrl.id})">delete</button>
+			  <button type="button" class="btn btn-default" ng-click="$ctrl.createPerson({name: $ctrl.name,age: $ctrl.age})">create</button>
+			  <button type="button" class="btn btn-default" ng-click="$ctrl.updatePerson({id: $ctrl.personId, name: $ctrl.name, age: $ctrl.age})">update</button>
+			  <button type="button" class="btn btn-default" ng-click="$ctrl.destroyPerson({id: $ctrl.personId})">delete</button>
 			</form>
+			
+			 <div ng-if="$ctrl.personError.length>0"><font color="red"><b>{{$ctrl.personError}}</b></font></div>
 		  </div>
 		</div>
 		
@@ -23,10 +25,13 @@
 		  </div>
 		  <div class="panel-body">
 		    <form class="navbar-form navbar-left">
-			  <button type="button" class="btn btn-default">create</button>
-			  <button type="button" class="btn btn-default">update</button>
-			  <button type="button" class="btn btn-default">delete</button>
+		      <input type="text" class="form-control" placeholder="id" ng-model="$ctrl.tableId">
+			  <button type="button" class="btn btn-default" ng-click="$ctrl.createTable()">create</button>
+			  <button type="button" class="btn btn-default" ng-click="$ctrl.updateTable({id: $ctrl.tableId})">update</button>
+			  <button type="button" class="btn btn-default" ng-click="$ctrl.destroyTable({id: $ctrl.tableId})">delete</button>
 			</form>
+			
+			<div ng-if="$ctrl.tableError.length>0"><font color="red"><b>{{$ctrl.tableError}}</b></font></div>
 		  </div>
 		</div>
 		
@@ -54,10 +59,28 @@
 		
 		<div class="panel panel-default">
 		  <!-- Default panel contents -->
+		  <div class="panel-heading">Tables</div>
+		  
+		  <!-- Table -->
+		  <table class="table table-striped table-bordered" id="tables">
+		  	<thead>
+		  		<tr>
+		  			<th>Id</th>
+		  		</tr>
+		  	</thead>
+		  	<tr ng-if="$ctrl.tables.length==0"><td colspan="3">No tables available</td></tr>
+		  	<tr ng-repeat="table in $ctrl.tables">
+			    <td>{{table.getId()}}</td>
+		   </tr>
+		  </table>
+		</div>
+		
+		<div class="panel panel-default">
+		  <!-- Default panel contents -->
 		  <div class="panel-heading">Seating arrangements</div>
 
 		
-		  <!-- Table -->
+		  <!-- Seating arrangements -->
 		  <table class="table table-striped table-bordered" id="seating.arrangements.table">
 		  	<thead>
 		  		<tr>

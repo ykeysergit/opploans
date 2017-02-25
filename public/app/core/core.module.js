@@ -1,1 +1,1 @@
-angular.module('core', ['core.Person']);
+angular.module('core', ['core.Person', 'core.Table']);
