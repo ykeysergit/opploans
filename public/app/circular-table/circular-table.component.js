@@ -19,6 +19,7 @@ angular.module('circularTableModule').
       self.personError='';
       self.tableError='';
       self.autoRefreshEnabled=false;
+      self.tableUpdated='';
       
       function clearInput(){
       	self.personId='';
@@ -145,6 +146,7 @@ angular.module('circularTableModule').
   				return;
   			}
   			
+  			self.seating_arrangements.length=0;
   			
   			jQuery.each(tableJson.seating_arrangements, function(index, seating){
   				var newSeating = new myns.SeatArrangement({	
@@ -160,6 +162,7 @@ angular.module('circularTableModule').
 				clearInput();
   			});
   			
+  			self.tableUpdated=tableJson.id;
   		};
   	
   		Table.update({id: params.id, people: self.people, then: params.then});
@@ -186,23 +189,11 @@ angular.module('circularTableModule').
   					return false;
   				}
   			});
-  			
-  			// remove associated seat arrangements;
-  			var seatingIndicesToRemove=[];
-  			
-  			jQuery.each(self.seating_arrangements,function(index, seating){
-  				if(seating.getTable().getId() == tableJson.id){
-  					seatingIndicesToRemove.push(seating);
-  					
-  				}
-  			});
-  			
-  			jQuery.each(seatingIndicesToRemove, function(index, seatPointer){
-  				var seat = self.seating_arrangements.splice(seatPointer,1)[0];
-
-  				self.seating_arrangements_lookup[seat.getId()]=null;
-  				console.log("[CircularTableComponent][destroyTable] Removed seat: "+seat);
-  			});
+		
+			if(self.tableUpdated == tableJson.id){
+				self.seating_arrangements.length=0;
+				self.tableUpdated='';
+			}
 	
   			clearInput();
   		};
@@ -215,35 +206,20 @@ angular.module('circularTableModule').
       			params={};
       		}
       	
-      	params.then=function(newPersonJson){
-      		var foundIndex=-1;
-      		
-      		if(jQuery.isEmptyObject(newPersonJson)){
-      			console.log("[CircularTableComponent][updatePerson] Did not update person("+newPersonObj.getId()+")");
-      			return;
-      		}
-      			  		
-  			jQuery.each(self.people,function(index, element){
-  				if(element.getId() == newPersonJson.id){
-  					foundIndex=index;
+      	params.then=function(personJson){		
+  			jQuery.each(self.people,function(index, person){
+  				if(person.getId() == personJson.id){
+  					console.log("[CircularTableComponent][updatePerson] Person before update: "+person);
+	      			
+	      			person.setName(personJson.name);
+	      			person.setAge(personJson.age);
+	      			
+	      			console.log("[CircularTableComponent][updatePerson] Updated person json: " + JSON.stringify(personJson));
+	      			console.log("[CircularTableComponent][updatePerson] Person after update: " + person);
+	      			clearInput();
   					return false;
   				}
   			});
-  			
-  			if(foundIndex>=0){
-  				console.log("[CircularTableComponent][updatePerson] Person before update: "+self.people[foundIndex]);
-
-      			var targetPerson = self.people[foundIndex];
-      			
-      			targetPerson.setName(newPersonJson.name);
-      			targetPerson.setAge(newPersonJson.age);
-      			
-      			console.log("[CircularTableComponent][updatePerson] Updated person json: " + JSON.stringify(newPersonJson));
-      			console.log("[CircularTableComponent][updatePerson] Person after update: " + targetPerson);
-      			clearInput();
-  			}else{
-  				console.log("[CircularTableComponent][updatePerson] Did not update person("+newPersonObj.getId()+")");
-  			}
       	};
   		
   		params.error=function(httpResp){
@@ -274,30 +250,6 @@ angular.module('circularTableModule').
 	  					return false;
 	  				}
 	  			});
-	  			
-	  			// remove associated seat arrangements;
-  				var seatingIndicesToRemove=[];
-	  			
-	  			// remove associated seat arrangements
-	  			console.log("[CircularTableComponent][destroyPerson] num seat arrangements: "+self.seating_arrangements.length);
-	  			
-	  			jQuery.each(self.seating_arrangements,function(index, seating){
-	  				console.log("[CircularTableComponent][destroyPerson] seat-person-id("+
-	  				seating.getPerson().getId()+") compared with target person("+personObj.getId()+")");
-	  				
-	  				if(seating.getPerson().getId()==personObj.getId()){
-	  					seatingIndicesToRemove.push(index);
-	  				}
-	  			});
-	  			
-	  			console.log("[CircularTableComponent][destroyPerson] seat indices to remove: "+seatingIndicesToRemove);
-			
-				jQuery.each(seatingIndicesToRemove, function(index, seatPointer){
-					var seat = self.seating_arrangements.splice(seatPointer,1)[0];
-
-  					self.seating_arrangements_lookup[seat.getId()]=null;
-  					console.log("[CircularTableComponent][destroyPerson] Removed seat arrangement: "+seat);
-				});
 	  			
 	  			clearInput();
 	  			
