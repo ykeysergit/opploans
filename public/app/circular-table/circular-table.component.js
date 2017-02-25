@@ -3,15 +3,21 @@ angular.module('circularTableModule').
     templateUrl:'circular-table/circular-table.template.html',
     controller: ['Person','Table',function CircularTableController(Person, Table) {
       var self=this;
+      var autoReloadInterval;
+      var autoReloadRate=1000;
+      
       self.seating_arrangements = [];
       self.tables = [];
       self.people = [];
+      self.peopleLookup={};
+      self.tablesLookup={};
       self.age='';
       self.name='';
       self.personId='';
       self.tableId='';
       self.personError='';
       self.tableError='';
+      self.autoRefreshEnabled=false;
       
       function clearInput(){
       	self.personId='';
@@ -21,6 +27,71 @@ angular.module('circularTableModule').
 		self.personError='';
 		self.tableError='';
       }
+      
+      self.toggleAutoReload=function(){
+      	console.log("[CircularTableComponent][toggleAutoReload] autoRefreshEnabled? "+self.autoRefreshEnabled);
+      	
+      	if(!self.autoRefreshEnabled){
+      		self.startAutoReload();
+      	}else{
+      		self.stopAutoReload();
+      	}
+      };
+      
+      self.startAutoReload=function(){
+      	if(!self.autoRefreshEnabled){
+      		autoReloadInterval=setInterval(function(){ self.reload(); }, autoReloadRate);
+      		self.autoRefreshEnabled=true;
+      		console.log("[CircularTableComponent][runAutoReload] started.");
+      	}
+      };
+      
+      self.stopAutoReload=function(){
+      	if(self.autoRefreshEnabled){
+      		clearInterval(autoReloadInterval);
+      		self.autoRefreshEnabled=false;
+      		console.log("[CircularTableComponent][stopAutoReload] stopped.");
+      	}
+      };
+      
+      self.reload=function(){
+      	console.log("[CircularTableComponent][reload] reloading...");
+	
+		var params={};
+
+		params.then=function(peopleJson){
+  			console.log("[CircularTableComponent][reload] reloading people...");
+  			console.log("[CircularTableComponent][reload] received people json: "+JSON.stringify(peopleJson));
+  			
+  			jQuery.each(peopleJson,function(index, personJson){
+  				if(!self.peopleLookup[personJson.id]){
+  					var newPerson = new myns.Person({id: personJson.id, name: personJson.name, age: personJson.age});
+  					self.people.push(newPerson);
+  					self.peopleLookup[personJson.id]=newPerson;
+  				}
+  			});
+  		};
+
+  		console.log("[CircularTableComponent][reload] calling people#index with then handler: "+params.then);
+  		
+  		Person.index({then: params.then});
+  		
+  		
+  		params.then=function(tablesJson){
+  			console.log("[CircularTableComponent][reload] reloading tables...");
+  			console.log("[CircularTableComponent][reload] received tables json: "+JSON.stringify(tablesJson));
+  			
+  			jQuery.each(tablesJson, function(index, tableJson){
+  				if(!self.tablesLookup[tableJson.id]){
+  					var newTable = new myns.Table({id: tableJson.id});
+  					self.tables.push(newTable);
+  					self.tablesLookup[tableJson.id]=newTable;
+  				}
+  			});
+  		};
+  		
+  		Table.index({then: params.then});
+      };
       
       self.createTable=function(params){
       	console.log("[CircularTableComponent][createTable] creating...");
@@ -36,25 +107,42 @@ angular.module('circularTableModule').
   			var newTable = new myns.Table({id: tableJson.id});
   			
   			self.tables.push(newTable);
+  			self.tablesLookup[newTable.getId()]=newTable;
   			console.log("[CircularTableComponent][createTable] New table created: " + newTable);
   			console.log("[CircularTableComponent][createTable] Num tables after create: "+self.tables.length);
   			clearInput();
   		};
   	
-  		Table.create(params);
+  		Table.create({then: params.then});
       };
       
       self.updateTable=function(params){
-      		if(!jQuery.isPlainObject(params)){
-      			params={};
-      		}
+      	console.log("[CircularTableComponent][updateTable] Updating...");
       	
-      		params.then=function(tableJson){
-      			// TODO
-      			clearInput();
-      		};
-      	
-      		Table.update(params);
+  		if(!jQuery.isPlainObject(params)){
+  			params={};
+  		}
+  	
+  		params.then=function(tableJson){
+  			console.log("[CircularTableComponent][updateTable] Received json: " + JSON.stringify(tableJson));
+  			
+  			if(jQuery(tableJson.seating_arrangements)!="array" || tableJson.seating_arrangements.length==0){
+  				console.log("[CircularTableComponent][updateTable] No seating arrangements received: "+JSON.stringify(tableJson));
+  				clearInput();
+  				return;
+  			}
+  					
+  			jQuery.each(tableJson.seating_arrangements, function(index, seating){
+  				var newSeating = new myns.SeatArrangement(
+  					{id: seating.id, table: tablesLookup[seating.table_id], 
+  					person: peopleLookup[seating.person.id]});
+  					
+				self.seating_arrangements.push(newSeating);
+				console.log("[CircularTableComponent][updateTable] New seating: "+newSeating);
+  			});
+  		};
+  	
+  		Table.update({id: params.id, people: self.people, then: params.then});
       };
       
       self.destroyTable=function(params){
@@ -91,7 +179,7 @@ angular.module('circularTableModule').
   			}
   		};
   		
-  		Table.destroy(params);
+  		Table.destroy({id: params.id, then: params.then});
       };
       
       self.updatePerson=function(params){
@@ -197,11 +285,11 @@ angular.module('circularTableModule').
 	      		console.log("[CircularTableComponent][createPerson] New person json: " + JSON.stringify(personJson));
 	      		
 	      		var newPersonObj = new myns.Person({id: personJson.id, name: personJson.name, age: personJson.age});
-	      		self.people.push(newPersonObj);
 	      		
+	      		self.people.push(newPersonObj);
+	      		self.peopleLookup[newPersonObj.getId()]=newPersonObj;
 	      		console.log("[CircularTableComponent][createPerson] New person object: " + personJson);
 	      		console.log("[CircularTableComponent][createPerson] Number of known people after create: "+self.people.length);
-	      		
 	      		clearInput();
       		}
       		else{

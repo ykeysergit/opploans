@@ -18,8 +18,24 @@ describe TablesController do
       empty_table.seat_a_person(person)  
     end
     
+    empty_table.save!
     empty_table
   }
+  
+  describe 'GET #index' do
+    it 'shall get all tables' do
+      populated_table
+      get :index
+      
+      expect(JSON.parse(response.body)).to be_an_instance_of(Array)
+      
+      all_tables = JSON.parse(response.body)
+      
+      expect(all_tables.count).to eq(1)
+      expect(all_tables.first['seating_arrangements']).to_not be_nil
+      expect(all_tables.first['seating_arrangements'].count).to eq(3)
+    end
+  end
   
   describe 'PUT #update' do
     it 'shall update an existing table' do

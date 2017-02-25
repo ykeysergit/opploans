@@ -2,6 +2,14 @@ class TablesController < ApplicationController
   before_action :init_logger
   protect_from_forgery with: :null_session
   
+  def index
+    all_tables=Table.all.collect do |table|
+      table.to_hash
+    end
+    
+    render json: all_tables
+  end
+  
   def init_logger
     @logger = Rails.logger
   end
@@ -35,10 +43,9 @@ class TablesController < ApplicationController
   def update_people(foundTable, people)
     people.each do |person|
       begin
-        unseated_person = Person.new
-        
-        unseated_person.name=person['name']
-        unseated_person.age=person['age'].to_i
+        unseated_person = Person.find_by(name: person['name'], age: person['age'])
+        unseated_person = Person.create(name: person['age'], age: person['age']) if unseated_person.nil?
+
         foundTable.seat_a_person(unseated_person)
       rescue InvalidSeatingArrangementException => e
         @logger.info("Message: #{e.message}. Not seated: #{e.person}")

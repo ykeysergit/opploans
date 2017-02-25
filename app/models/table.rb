@@ -88,7 +88,7 @@ class Table < ApplicationRecord
   def to_hash
     self_hash = {id: self.id, people: [], seating_arrangements: []}
     
-    people.each do |person|
+    people.reload.each do |person|
       self_hash[:people] << person.to_hash
     end
     

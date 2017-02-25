@@ -5,6 +5,23 @@ angular.module('core.Person').
     	/*
     	 * Return a promise
     	 */
+    	
+    	myns.Person.index=function(params){
+    		if(!params.then){
+  				throw '[PersonService][index] then param is required: '+params.then;
+  			}
+  			
+  			 var Client=$resource('/app/people', {}, {
+		        query: {
+		          method: 'GET',
+		          isArray: true
+		        }
+		      });
+
+  			console.log("[PersonService][index] getting...");
+  			Client.query({},params.then);
+    	};
+    	
   		myns.Person.create=function(params){
   			if(!jQuery.isPlainObject(params)){
   				throw '[PersonService][create] params is not a plain object: '+JSON.stringify(params);

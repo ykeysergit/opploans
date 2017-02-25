@@ -5,6 +5,21 @@ describe PeopleController do
       Person.create(name: "John", age: 30)
     }
     
+  describe 'GET #index' do
+    it 'shall get all people' do
+      person
+      get :index
+      
+      expect(JSON.parse(response.body)).to be_an_instance_of(Array)
+      
+      all_people = JSON.parse(response.body)
+      
+      expect(all_people.count).to eq(1)
+      expect(all_people.first['name']).to eq(person.name)
+      expect(all_people.first['age'].to_i).to eq(person.age)
+    end
+  end
+    
   describe 'DELETE #destroy' do
     describe 'when the person exists' do
       it 'shall delete the person' do
