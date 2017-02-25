@@ -44,17 +44,17 @@ class Table < ApplicationRecord
     end
 
     # First person
-    if seating_arrangements.empty?
+    if seating_arrangements.reload.empty?
       new_seat_arrangement=seating_arrangements.create(person: unseated_person, table: self, position: 0)
       @logger.info("First person has been seated: #{unseated_person.name}(#{unseated_person.age})")
     # Second person  
-    elsif seating_arrangements.count == 1 && 
+    elsif seating_arrangements.reload.count == 1 && 
       self.class.age_within_threshold?(seating_arrangements.reload.first.person.age, unseated_person.age)
       
       new_seat_arrangement=seating_arrangements.create(table: self, person: unseated_person, position: 1)
       @logger.info("Second person has been seated: #{unseated_person.name}(#{unseated_person.age})")
     # Find sandwich  
-    elsif seating_arrangements.count > 1      
+    elsif seating_arrangements.reload.count > 1      
       for position in (1..seating_arrangements.count-1) 
         if self.class.valid_to_sit_between?(seating_arrangements[position-1].person,
                                           seating_arrangements[position].person,

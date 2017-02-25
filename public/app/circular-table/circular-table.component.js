@@ -83,12 +83,23 @@ angular.module('circularTableModule').
   			console.log("[CircularTableComponent][reload] received tables json: "+JSON.stringify(tablesJson));
   			
   			self.tables.length=0;
+  			self.seating_arrangements.length=0;
   			
   			jQuery.each(tablesJson, function(index, tableJson){
 				var newTable = new myns.Table({id: tableJson.id});
 				self.tables.push(newTable);
 				self.tablesLookup[tableJson.id]=newTable;
-  				
+				
+				jQuery.each(tableJson.seating_arrangements, function(seat_iter, seat){
+					var newSeatingArrangement = new myns.SeatArrangement({
+						table: newTable, 
+						person: self.peopleLookup[seat.person.id],
+						position: seat.position
+						});
+					
+					self.seating_arrangements.push(newSeatingArrangement);
+					self.seating_arrangements_lookup[newSeatingArrangement.getId()]=newSeatingArrangement;
+				});
   			});
   		};
   		
@@ -161,31 +172,39 @@ angular.module('circularTableModule').
   			params={};
   		}
   	
-  		params.then=function(tableJson){
-  			var foundIndex=-1;
-  			
+  		params.then=function(tableJson){			
   			console.log("[CircularTableComponent][destroyTable] Table json received: "+JSON.stringify(tableJson));
   			console.log("[CircularTableComponent][destroyTable] Num tables before destroy: "+self.tables.length);
   			
-  			jQuery.each(self.tables,function(index,element){
-  				if(tableJson.id == element.getId()){
-  					foundIndex=index;
+  			// remove table
+  			jQuery.each(self.tables,function(index,table){
+  				if(tableJson.id == table.getId()){
+	  				console.log("[CircularTableComponent][destroyTable] Table to remove: "+table);
+	  				self.tables.splice(index,1);
+	  				console.log("[CircularTableComponent][destroyTable] Removed table: "+table); 
+	  				console.log("[CircularTableComponent][destroyTable] Num tables after destroy: "+self.tables.length);
   					return false;
   				}
   			});
   			
-  			if(foundIndex >= 0){
-  				var targetTable=self.tables[foundIndex];
-  				console.log("[CircularTableComponent][destroyTable] Table to remove: "+targetTable);
-  				self.tables.splice(foundIndex,1);
-  				console.log("[CircularTableComponent][destroyTable] Removed table: "+tableJson.id); 
-  				console.log("[CircularTableComponent][destroyTable] Num tables after destroy: "+self.tables.length);
-  				clearInput();
-  			}
-  			else
-  			{
-  				console.log("[CircularTableComponent][destroyTable] Table not removed: "+tableJson.id); 
-  			}
+  			// remove associated seat arrangements;
+  			var seatingIndicesToRemove=[];
+  			
+  			jQuery.each(self.seating_arrangements,function(index, seating){
+  				if(seating.getTable().getId() == tableJson.id){
+  					seatingIndicesToRemove.push(seating);
+  					
+  				}
+  			});
+  			
+  			jQuery.each(seatingIndicesToRemove, function(index, seatPointer){
+  				var seat = self.seating_arrangements.splice(seatPointer,1)[0];
+
+  				self.seating_arrangements_lookup[seat.getId()]=null;
+  				console.log("[CircularTableComponent][destroyTable] Removed seat: "+seat);
+  			});
+	
+  			clearInput();
   		};
   		
   		Table.destroy({id: params.id, then: params.then});
@@ -239,40 +258,50 @@ angular.module('circularTableModule').
       			params={};
       		}
       	
-      	params.then=function(newPersonJson){
-      		if(!jQuery.isEmptyObject(newPersonJson)){
+      	params.then=function(personJson){
+      		if(!jQuery.isEmptyObject(personJson)){
       			console.log("[CircularTableComponent][destroyPerson] Number of known people before destroy: "+self.people.length);
-      			console.log("[CircularTableComponent][destroyPerson] Deleted person json: " + JSON.stringify(newPersonJson));
+      			console.log("[CircularTableComponent][destroyPerson] Deleted person json: " + JSON.stringify(personJson));
       			
-	      		var newPersonObj = new myns.Person({id: newPersonJson.id, name: newPersonJson.name, age: newPersonJson.age});
+	      		var personObj = new myns.Person({id: personJson.id, name: personJson.name, age: personJson.age});
 	      		
-	      		console.log("[CircularTableComponent][destroyPerson] Deleted person object: " + newPersonObj);
+	      		console.log("[CircularTableComponent][destroyPerson] Deleted person object: " + personObj);
 	  			
 	  			jQuery.each(self.people,function(index, person){
-	  				if(person.getId()==newPersonObj.getId()){
+	  				if(person.getId()==personObj.getId()){
 	  					console.log("[CircularTableComponent][destroyPerson] Found person to remove: "+person);
 	  					self.people.splice(index,1);
 	  					return false;
 	  				}
 	  			});
 	  			
+	  			// remove associated seat arrangements;
+  				var seatingIndicesToRemove=[];
 	  			
 	  			// remove associated seat arrangements
-	  			jQuery.each(self.seat_arrangements,function(index, seating){
-	  				if(seating.getPerson().getId()==newPersonObj.getId()){
-	  					self.seating_arrangements.splice(index,1);
-	  					self.seating_arrangements_lookup[seating.getId()]=null;
-	  					console.log("[CircularTableComponent][destroyPerson] Removed seat arrangement: "+seating.getId());
+	  			console.log("[CircularTableComponent][destroyPerson] num seat arrangements: "+self.seating_arrangements.length);
+	  			
+	  			jQuery.each(self.seating_arrangements,function(index, seating){
+	  				console.log("[CircularTableComponent][destroyPerson] seat-person-id("+
+	  				seating.getPerson().getId()+") compared with target person("+personObj.getId()+")");
+	  				
+	  				if(seating.getPerson().getId()==personObj.getId()){
+	  					seatingIndicesToRemove.push(index);
 	  				}
 	  			});
+	  			
+	  			console.log("[CircularTableComponent][destroyPerson] seat indices to remove: "+seatingIndicesToRemove);
 			
+				jQuery.each(seatingIndicesToRemove, function(index, seatPointer){
+					var seat = self.seating_arrangements.splice(seatPointer,1)[0];
+
+  					self.seating_arrangements_lookup[seat.getId()]=null;
+  					console.log("[CircularTableComponent][destroyPerson] Removed seat arrangement: "+seat);
+				});
 	  			
 	  			clearInput();
 	  			
 	  			console.log("[CircularTableComponent][destroyPerson] Number of known people after destroy: "+self.people.length);
-  			}
-  			else{
-  				self.error="Person not deleted: "+params.id;
   			}
       	};
       	
