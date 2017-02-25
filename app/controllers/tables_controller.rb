@@ -41,6 +41,8 @@ class TablesController < ApplicationController
   protected
 
   def update_people(foundTable, people)
+    @logger.info("People to update: #{people.count}")
+    
     people.each do |person|
       begin
         unseated_person = Person.find_by(id: person['id'].to_i)
@@ -48,9 +50,9 @@ class TablesController < ApplicationController
 
         foundTable.seat_a_person(unseated_person)
       rescue InvalidSeatingArrangementException => e
-        @logger.info("Message: #{e.message}. Not seated: #{e.person}")
+        @logger.info("Message: #{e.message}. Person: #{e.person}")
       rescue AlreadySeatedPersonException => e
-        @logger.info("Message: #{e.message}. Not seated: #{e.person}")
+        @logger.info("Message: #{e.message}. Person: #{e.person}")
       end 
     end
   end

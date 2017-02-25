@@ -13,6 +13,6 @@ module CircularTable
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
     Rails.logger=Logger.new(STDOUT)
-    config.log_level = :warn
+    config.log_level = :info
   end
 end
