@@ -43,8 +43,8 @@ class TablesController < ApplicationController
   def update_people(foundTable, people)
     people.each do |person|
       begin
-        unseated_person = Person.find_by(name: person['name'], age: person['age'])
-        unseated_person = Person.create(name: person['age'], age: person['age']) if unseated_person.nil?
+        unseated_person = Person.find_by(person['id'])
+        unseated_person = Person.create(name: person['name'], age: person['age'].to_i) if unseated_person.nil?
 
         foundTable.seat_a_person(unseated_person)
       rescue InvalidSeatingArrangementException => e

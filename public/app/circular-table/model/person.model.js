@@ -19,7 +19,10 @@ myns.Person=function(params){
 	self.setName=function(newName){name=newName;};	
 	
 	self.toString=function(){
-		return JSON.stringify({id: id, name: name, age: age});
+		return JSON.stringify(self.toPlainObject());
+	};
+	
+	self.toPlainObject=function(){
+		return {id: id, name: name, age: age};
 	};
 };
-

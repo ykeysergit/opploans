@@ -31,6 +31,12 @@ class Table < ApplicationRecord
   def seat_a_person(unseated_person)
     # Handle base cases
 
+    if unseated_person.nil?
+      raise 'Unseated person is missing' 
+    elsif unseated_person.age.nil?
+      raise 'Unseated person is missing an age'
+    end
+
     new_seat_arrangement=false
 
     if !self.people.where(name: unseated_person.name, age: unseated_person.age).blank?
@@ -43,7 +49,7 @@ class Table < ApplicationRecord
       @logger.info("First person has been seated: #{unseated_person.name}(#{unseated_person.age})")
     # Second person  
     elsif seating_arrangements.count == 1 && 
-      self.class.age_within_threshold?(seating_arrangements.first.person.age, unseated_person.age)
+      self.class.age_within_threshold?(seating_arrangements.reload.first.person.age, unseated_person.age)
       
       new_seat_arrangement=seating_arrangements.create(table: self, person: unseated_person, position: 1)
       @logger.info("Second person has been seated: #{unseated_person.name}(#{unseated_person.age})")

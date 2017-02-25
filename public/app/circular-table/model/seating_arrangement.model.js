@@ -11,6 +11,7 @@ myns.SeatArrangement=function(params){
 	this.setPosition=function(newPos){position=newPos;};
 	this.getPosition=function(){return position;};
 	this.setId=function(newId){id=newId;};
+	this.getId=function(){return id;};
 	this.setTable=function(newTable){table=newTable;};
 	this.setPerson=function(newPerson){person=newPerson;};
 	this.getTable=function(){return table;};

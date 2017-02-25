@@ -70,7 +70,15 @@ angular.module('core.Table').
 		    
   			var newClient = new Client();
   			
-  			newClient.table={people: params.people};
+  			var json_people_display=[];
+  			
+  			json_people_display=jQuery.map(params.people, function(person, index){
+  				return person.toPlainObject();
+  			});
+  			
+  			console.log("[TableService][update] Updating with people: "+JSON.stringify({people: json_people_display}));
+  			
+  			newClient.table={people: json_people_display};
   			newClient.$update({id: params.id},params.success,params.error).then(params.then);
   		};
 
