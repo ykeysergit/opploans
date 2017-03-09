@@ -1,2 +1,2 @@
-Backend: Ruby on Rails
-Frontend: Angular
+* Ruby on Rails
+* Angular
